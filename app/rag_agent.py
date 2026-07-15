@@ -114,13 +114,3 @@ def chat_response(question):
                         
     return final_response
     
-
-# added agent and vector_store at global level
-
-
-'''
-
-Error calling model 'gemini-2.5-flash' (NOT_FOUND): 404 NOT_FOUND. {'error': {'code': 404, 'message': 'This model models/gemini-2.5-flash is no longer available to new users. 
-Please update your code to use a newer model for the latest features and improvements.', 'status': 'NOT_FOUND'}}
-
-'''
