@@ -40,9 +40,9 @@ A conversational AI chatbot that answers questions about uploaded PDF documents 
    pip install -r requirements.txt
 ```
 3. Create a `.env` file in the root directory:
-
-GOOGLE_API_KEY=your_api_key_here
-
+```bash
+   GOOGLE_API_KEY=your_api_key_here
+```
 4. Run the application:
 ```bash
    flask run
