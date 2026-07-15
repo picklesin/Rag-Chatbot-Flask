@@ -18,6 +18,7 @@ env/
 # ChromaDB
 chroma_db/
 .chroma/
+chroma/
 
 # Flask
 instance/
