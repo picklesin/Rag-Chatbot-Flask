@@ -4,6 +4,8 @@ Work in progress — frontend styling and additional features under active devel
 
 # Screenshot
 <img width="1687" height="735" alt="Screenshot 2026-07-15 at 6 23 06 PM" src="https://github.com/user-attachments/assets/b389c646-1995-4cb3-a9a1-c71fbc26d322" />
+
+
 # PDF RAG Chatbot
 
 A conversational AI chatbot that answers questions about uploaded PDF documents using Retrieval-Augmented Generation (RAG). Built with Flask, LangChain, and Google Gemini.
