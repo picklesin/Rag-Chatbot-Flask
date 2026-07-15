@@ -90,15 +90,8 @@ def build_rag_agent():
 def chat_response(question):
     agent = build_rag_agent()
 
-    if "thread_id" not in session:
-        session["thread_id"] = str(uuid.uuid4())
-
-    thread_id = session["thread_id"]
-
-
     result = agent.invoke(
     {"messages": [{"role": "user", "content": question}]},
-    {"configurable": {"thread_id":thread_id}}
     )
 
     response = result["messages"][-1].content
@@ -106,7 +99,6 @@ def chat_response(question):
 
     if isinstance(response, list):
         final_response = response[0]["text"]
-
                         
     return final_response
     
