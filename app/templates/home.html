@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+
+    <style>
+        .upload-card{
+            border: 1px solid;
+        }
+
+    
+
+
+    </style>
+</head>
+<body>
+
+    {% for message in get_flashed_messages() %}
+        <div class="messages">{{ message }}</div>
+    {% endfor %}
+
+    <div class="upload-card">
+        <h2 class="upload">Upload</h2>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" value="Upload">
+        </form>
+    </div>
+
+    <div class="chat-container">
+    <div id="chat-box"></div>
+
+    <input id="message" type="text" placeholder="Ask something...">
+
+    <button onclick="sendMessage()">Send</button>
+    <script src="/static/script.js"></script>
+
+    
+</div>
+
+
+    
+</body>
+</html>

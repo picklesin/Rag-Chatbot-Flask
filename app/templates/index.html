@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rag ChatBot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .Title {
+            text-align: center;
+            padding-top: 1rem;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            }
+        #chatbox {
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+            margin-top: 60px;
+            }
+            
+        #userInput {
+            margin-left: auto;
+            margin-right: auto;
+            width: 40%;
+            margin-top: 60px;
+            }
+        #textInput {
+            width: 90%;
+            border: 1px solid black;
+            margin-bottom: 1rem;
+            font-size: 17px;
+            border-radius: 1rem;
+            padding: 0.3rem;
+            }
+        .userText {
+            color: black;
+            font-size: 17px;
+            text-align: right;
+            line-height: 30px;
+        }
+        .userText span {
+            background-color: #E9E9E980;
+            padding: 10px;
+            border-radius: 1rem;
+        }
+        .botText {
+            color: black;
+            font-size: 17px;
+            text-align: left;
+            line-height: 30px;
+        }
+        .botText span {
+            background-color: #d7d5d580;
+            padding: 10px;
+            border-radius: 1rem;
+        }
+        #tidbit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+        }
+
+        .boxed {
+            margin-left: auto;
+            margin-right: auto;
+            width: 78%;
+            margin-top: 60px;
+            border: 1px solid black;
+            border-radius: 1rem;
+        }
+        .messages {
+            margin: 1rem;
+            font-size: 1.5rem;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    
+     <h1 class="Title">ChatBot</h1>
+       
+        <div class="boxed">
+            {% for message in get_flashed_messages() %}
+                <div class="messages">{{ message }}</div>
+            {% endfor %}
+        <div>
+
+        <div id="chatbox">
+            <p class="botText">
+            </p>
+        </div>
+
+        <div id="userInput">
+            <input id="textInput" type="text" name="question" placeholder="Ask about your document"/>
+            <div class="upload-card">
+                <form method="POST" enctype="multipart/form-data">
+                    <input class="file-button" type="file" name="file">
+                    <input id="upload-button" type="submit" value="Upload">
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+
+            
+    <script>
+        function getBotResponse() {
+            var rawText = $("#textInput").val();
+            var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+            $("#textInput").val("");
+            $("#chatbox").append(userHtml);
+            document
+                .getElementById("userInput")
+                .scrollIntoView({ block: "start", behavior: "smooth" });
+            $.get("/chatbot", { question: rawText }).done(function (data) {
+                var botHtml = '<p class="botText"><span>' + data + "</span></p>";
+
+                document
+                    .getElementById("userInput")
+                    .scrollIntoView({ block: "start", behavior: "smooth" });
+            });
+        }
+        $("#textInput").keypress(function (e) {
+            if (e.which == 13) {
+                getBotResponse();
+            }
+        });
+
+    </script>
+    </div>
+    </div>
+</body>
+</html>
