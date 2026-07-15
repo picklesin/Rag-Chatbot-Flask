@@ -1,3 +1,7 @@
+## Project Status
+
+Work in progress — frontend styling and additional features under active development.
+
 # PDF RAG Chatbot
 
 A conversational AI chatbot that answers questions about uploaded PDF documents using Retrieval-Augmented Generation (RAG). Built with Flask, LangChain, and Google Gemini.
@@ -43,7 +47,3 @@ GOOGLE_API_KEY=your_api_key_here
 ```bash
    flask run
 ```
-
-## Project Status
-
-Work in progress — frontend styling and additional features under active development.
