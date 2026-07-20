@@ -3,8 +3,7 @@
 Work in progress — frontend styling and additional features under active development.
 
 # Screenshot
-<img width="1687" height="735" alt="Screenshot 2026-07-15 at 6 23 06 PM" src="https://github.com/user-attachments/assets/b389c646-1995-4cb3-a9a1-c71fbc26d322" />
-
+<img width="1710" height="863" alt="Screenshot 2026-07-19 at 7 25 44 PM" src="https://github.com/user-attachments/assets/cca78716-1f43-45a4-9a09-1f87d50eeea7" />
 
 # PDF RAG Chatbot
 

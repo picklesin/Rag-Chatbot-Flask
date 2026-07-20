@@ -99,18 +99,18 @@ def chat_response(question):
 
     thread_id = session["thread_id"]
 
-    result = agent.invoke(
+    stream = agent.stream_events(
     {"messages": [{"role": "user", "content": question}]},
     {"configurable": {"thread_id": thread_id}},
+    version="v3",
     )
 
-    response = result["messages"][-1].content
+    for message in stream.messages:
+        for delta in message.text:
+            print(f"This is LLM response: {delta}")
+            yield delta
 
-    if isinstance(response, list):
-        final_response = response[0]["text"]
-    else:
-        final_response = response
 
-                        
-    return final_response
+    
+   
     

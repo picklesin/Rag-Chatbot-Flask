@@ -1,5 +1,5 @@
 import os
-from flask import render_template, url_for, redirect, Blueprint, request, flash, current_app
+from flask import render_template, url_for, redirect, Blueprint, request, flash, current_app, jsonify
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from app.rag_agent import ingest_pdf, chat_response
@@ -52,13 +52,21 @@ def upload():
         
    
 
-@main.route("/chatbot")
+@main.route("/chatbot", methods=["POST"])
 def chat_bot():
 
-    question = request.args.get("question")
-    response = chat_response(question)
-       
-    return response
+    data = request.get_json()
+    question= data.get('data')
+    print(f"This is the question: {question}")
+    response = "".join(chat_response(question))
+
+    try:
+        print("Its working here")
+        return jsonify({"message":response})
+    
+    except Exception as e:
+        error_msg = f"Error: {str(e)}"
+        return jsonify({"response":True, "message":error_msg})
     
 
 
