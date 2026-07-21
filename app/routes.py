@@ -12,7 +12,7 @@ load_dotenv()
 
 @main.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("new.html")
 
 ALLOWED_EXTENSIONS = {'pdf'}
 def allowed_file(filename):
@@ -57,11 +57,9 @@ def chat_bot():
 
     data = request.get_json()
     question= data.get('data')
-    print(f"This is the question: {question}")
     response = "".join(chat_response(question))
 
     try:
-        print("Its working here")
         return jsonify({"message":response})
     
     except Exception as e:
