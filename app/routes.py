@@ -12,7 +12,7 @@ load_dotenv()
 
 @main.route("/")
 def home():
-    return render_template("new.html")
+    return render_template("index.html")
 
 ALLOWED_EXTENSIONS = {'pdf'}
 def allowed_file(filename):
