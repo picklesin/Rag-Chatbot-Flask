@@ -40,6 +40,7 @@ def load_vector_store():
     print("Creating vector store", flush=True)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
+    print("Embeddings created", flush=True)
     store = Chroma(
         collection_name="pdf-collection",
         embedding_function=embeddings,
