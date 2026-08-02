@@ -1,10 +1,13 @@
+import os
 from flask import Flask
-from app.config import Config
+from app.config import Config, Production
 
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_object(Config)
+    # for local use Config instead of Production
+    app.config.from_object(Production)
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 
     from app.routes import main

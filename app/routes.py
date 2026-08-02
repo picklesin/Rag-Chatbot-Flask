@@ -42,6 +42,8 @@ def upload():
         
             file.save(file_path)
             ingest_pdf(file_path)
+
+            os.remove(file_path)
           
             flash("PDF uploaded!")
             return redirect(url_for('main.home'))
