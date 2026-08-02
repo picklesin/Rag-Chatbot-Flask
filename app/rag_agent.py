@@ -14,7 +14,6 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 def text_splitter(file_path):
     print("Text split function gets called", flush=True)
     loader = PyPDFLoader(file_path)
-    print("Pdf gets loaded")
     docs = loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -31,13 +30,14 @@ def text_splitter(file_path):
 def ingest_pdf(file_path):
     print("Ingest function get called", flush=True)
     docs = text_splitter(file_path)
-    print("Text gets split")
+    print("Text gets split", flush=True)
     vector_store = load_vector_store()
     vector_store.add_documents(docs)
 
 
 # Create Emdeddings Model
 def load_vector_store():
+    print("Creating vector store", flush=True)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
     store = Chroma(
@@ -45,7 +45,7 @@ def load_vector_store():
         embedding_function=embeddings,
         persist_directory='chroma',
     )
-
+    print("Vector store is created", flush=True)
     return store
 
 vector_store = load_vector_store()
