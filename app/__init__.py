@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from app.config import Config, Production
+from app.config import TestConfig, Production
 
 
 def create_app():
