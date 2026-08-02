@@ -9,7 +9,7 @@ class TestConfig():
     DEBUG = True
 
 
-class Production():
+class ProductionConfig():
     GEMINI_API_KEY = os.getenv("GOOGLE_API_KEY")
     SECRET_KEY = os.getenv("SECRET_KEY")
     UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER_PRODUCTION")
