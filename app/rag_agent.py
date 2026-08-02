@@ -42,17 +42,23 @@ def load_vector_store():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
     print("Embeddings created", flush=True)
-
-    client = Client()
     
-    store = Chroma(
-        client=client,
-        collection_name="pdf-collection",
-        embedding_function=embeddings,
-        #persist_directory='chroma',
-    )
-    print("Vector store is created", flush=True)
-    return store
+    client = Client()
+
+    try:
+        store = Chroma(
+            client=client,
+            collection_name="pdf-collection",
+            embedding_function=embeddings,
+            #persist_directory='chroma',
+        )
+        print("Vector store is created", flush=True)
+        return store
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise
 
 vector_store = load_vector_store()
 
