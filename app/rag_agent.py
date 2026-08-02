@@ -12,7 +12,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 
 def text_splitter(file_path):
-    print("Text split function gets called")
+    print("Text split function gets called", flush=True)
     loader = PyPDFLoader(file_path)
     print("Pdf gets loaded")
     docs = loader.load()
@@ -29,7 +29,7 @@ def text_splitter(file_path):
 
 
 def ingest_pdf(file_path):
-    print("Ingest function get called")
+    print("Ingest function get called", flush=True)
     docs = text_splitter(file_path)
     print("Text gets split")
     vector_store = load_vector_store()

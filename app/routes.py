@@ -38,12 +38,13 @@ def upload():
         
 
         if file and allowed_file(file.filename):
+            print("Pass allowed pdf", flush=True)
             filename = secure_filename(file.filename)
+            print("Filename:", filename, flush=True)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            print("Works after file path")
-        
+                    
             file.save(file_path)
-            print("File gets saved")
+            print("File gets saved", flush=True)
             ingest_pdf(file_path)
 
             os.remove(file_path)
