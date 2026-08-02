@@ -43,7 +43,7 @@ def load_vector_store():
     store = Chroma(
         collection_name="pdf-collection",
         embedding_function=embeddings,
-        persist_directory='chroma',
+        #persist_directory='chroma',
     )
     print("Vector store is created", flush=True)
     return store
