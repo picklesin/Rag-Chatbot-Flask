@@ -24,6 +24,7 @@ def allowed_file(filename):
 def upload():
   
     if request.method == 'POST':
+        print(request.files, flush=True)
 
         if 'file' not in request.files:
             flash('No file part')
