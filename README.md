@@ -2,6 +2,8 @@
 
 Work in progress — additional features under active development.
 
+**Live Demo:** [RAG Chatbot](https://rag-chatbot-szco.onrender.com)
+
 ## Screenshot
 <img width="1710" height="863" alt="Screenshot 2026-07-19 at 7 25 44 PM" src="https://github.com/user-attachments/assets/cca78716-1f43-45a4-9a09-1f87d50eeea7" />
 

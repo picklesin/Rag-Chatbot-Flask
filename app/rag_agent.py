@@ -12,9 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
 
-
 def text_splitter(file_path):
-    print("Text split function gets called", flush=True)
     loader = PyPDFLoader(file_path)
     docs = loader.load()
 
@@ -25,14 +23,11 @@ def text_splitter(file_path):
     )
 
     doc = text_splitter.split_documents(docs)
-
     return doc
 
 
 def ingest_pdf(file_path):
-    print("Ingest function get called", flush=True)
     docs = text_splitter(file_path)
-    print("Text gets split", flush=True)
     vector_store = load_vector_store_production()
     vector_store.add_documents(docs)
 
@@ -50,9 +45,8 @@ def load_vector_store_developement():
         )
         return store
 
-
     except Exception as e:
-        error_msg = f"Error: {str(e)}"
+        error_msg = (f"Error: {str(e)}")
         flash (error_msg)
 
 # Create embeddings model for production
@@ -67,13 +61,11 @@ def load_vector_store_production():
             collection_name="pdf-collection",
             connection=os.environ["DATABASE_URL"],
         )
-        print("Vector store created", flush=True)
         return store
 
     except Exception as e:
         error_msg = (f"Error: {str(e)}")
         flash(error_msg)
-
         
 
 vector_store = load_vector_store_production()
@@ -92,10 +84,8 @@ def build_rag_agent(vector_store):
         return serialized, retrieved_docs
 
     model = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
-
     tools = [retrieve_content]
     checkpointer = InMemorySaver()
-
 
     prompt = (
         "You are an assistant conversational chatbot."
@@ -137,10 +127,8 @@ def chat_response(question):
 
     for message in stream.messages:
         for delta in message.text:
-            print(f"This is LLM response: {delta}")
             yield delta
 
 
     
    
-    
