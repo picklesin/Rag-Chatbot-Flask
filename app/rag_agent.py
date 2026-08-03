@@ -1,15 +1,16 @@
 import os
 import uuid
-from chromadb import Client
-from flask import session
+from flask import session, flash
 from langchain.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_postgres import PGVector
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
 
 
 def text_splitter(file_path):
@@ -32,37 +33,50 @@ def ingest_pdf(file_path):
     print("Ingest function get called", flush=True)
     docs = text_splitter(file_path)
     print("Text gets split", flush=True)
-    vector_store = load_vector_store()
+    vector_store = load_vector_store_production()
     vector_store.add_documents(docs)
 
 
-# Create Emdeddings Model
-def load_vector_store():
-    print("Creating vector store", flush=True)
+# Create embeddings model for development
+def load_vector_store_developement():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
-    print("Embeddings created", flush=True)
-    
-    client = Client()
-
+        
     try:
         store = Chroma(
-            # client=client,
-            collection_name="test",
-            # embedding_function=embeddings,
-            #persist_directory='chroma',
+            collection_name="pdf-collection",
+            embedding_function=embeddings,
+            persist_directory='chroma',
         )
-        print("Vector store is created", flush=True)
+        return store
+
+
+    except Exception as e:
+        error_msg = f"Error: {str(e)}"
+        flash (error_msg)
+
+# Create embeddings model for production
+def load_vector_store_production():
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
+                                                api_key=os.environ["GOOGLE_API_KEY"],)
+    print("Creating vector store", flush=True)
+
+    try:
+        store = PGVector(
+            embeddings=embeddings,
+            collection_name="pdf-collection",
+            connection=os.environ["DATABASE_URL"],
+        )
+        print("Vector store created", flush=True)
         return store
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
-        raise
+        error_msg = (f"Error: {str(e)}")
+        flash(error_msg)
 
-vector_store = load_vector_store()
+        
 
-
+vector_store = load_vector_store_production()
 
 # Build rag agent using Gemini
 def build_rag_agent(vector_store):

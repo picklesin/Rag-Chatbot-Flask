@@ -24,8 +24,7 @@ def allowed_file(filename):
 def upload():
   
     if request.method == 'POST':
-        print(request.files, flush=True)
-
+  
         if 'file' not in request.files:
             flash('No file part')
             return redirect(url_for('main.home'))
@@ -38,13 +37,10 @@ def upload():
         
 
         if file and allowed_file(file.filename):
-            print("Pass allowed pdf", flush=True)
             filename = secure_filename(file.filename)
-            print("Filename:", filename, flush=True)
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
                     
             file.save(file_path)
-            print("File gets saved", flush=True)
             ingest_pdf(file_path)
 
             os.remove(file_path)
