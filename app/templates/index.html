@@ -16,8 +16,8 @@
         }
 
         .box {
-            width: min(95%, 800px);
-            height: 100vh;
+            width: min(80%, 800px);
+            height: 80vh;
             margin-top: 85px;
         }
 
@@ -207,9 +207,13 @@
                         </div>
                 </div>
             </div>`
+
+
             sendbtn.disabled = true
             userinputarea.disabled = true
             scrollToBottom()
+
+
             document.getElementById('userinput').value = ""
             document.getElementById('userinput').placeholder = "Wait . . ."
 
@@ -219,7 +223,6 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ data: userinput })
-
 
             });
             //let json = await response.json();
@@ -239,12 +242,12 @@
 
             while(true) {
                 const { done, value } = await reader.read();
-                output = new TextDecoder().decode(value); 
-
+                
                 if (done) {
-                    return;
+                    break;
                 }
 
+                output = new TextDecoder().decode(value);
                 temp.innerHTML += output;
                 scrollToBottom();
             }
@@ -252,6 +255,7 @@
             temp.removeAttribute('id');
             sendbtn.disabled = false;
             userinputarea.disabled = false;
+            scrollToBottom()
 
             document.getElementById('userinput').placeholder = "Ask about your document"
 

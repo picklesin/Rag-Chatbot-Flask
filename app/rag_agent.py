@@ -10,6 +10,9 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from google.genai.errors import ClientError
+from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
+
 
 
 def text_splitter(file_path):
@@ -53,8 +56,7 @@ def load_vector_store_developement():
 def load_vector_store_production():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
-    print("Creating vector store", flush=True)
-
+    
     try:
         store = PGVector(
             embeddings=embeddings,
@@ -111,24 +113,44 @@ def build_rag_agent(vector_store):
 agent = build_rag_agent(vector_store)
 
 
+def quota_exhausted(exc):
+    return (
+        isinstance(exc, ClientError)
+        and "RESOURCE_EXHAUSTED" in str(exc)
+    )
+
+
+@retry(
+    retry=retry_if_exception_type(quota_exhausted),
+    stop=stop_after_attempt(3),
+    wait=wait_exponential_jitter(initial=60, max=180),
+    reraise=True,
+)
+
 # Gemini rag response
 def chat_response(question):
 
-    if "thread_id" not in session:
-        session["thread_id"] = str(uuid.uuid4())
+    try:
+        if "thread_id" not in session:
+            session["thread_id"] = str(uuid.uuid4())
 
-    thread_id = session["thread_id"]
+        thread_id = session["thread_id"]
 
-    stream = agent.stream_events(
-    {"messages": [{"role": "user", "content": question}]},
-    {"configurable": {"thread_id": thread_id}},
-    version="v3",
-    )
+        stream = agent.stream_events(
+        {"messages": [{"role": "user", "content": question}]},
+        {"configurable": {"thread_id": thread_id}},
+        version="v3",
+        )
+       
+        for message in stream.messages:
+            for delta in message.text:
+                yield delta
 
-    for message in stream.messages:
-        for delta in message.text:
-            yield delta
+    except ClientError as e:
+        print(f"This is error: {str(e)}")
+        if "RESOURCE_EXHAUSTED" in str(e):
+            error_msg = ("Gemini quota has been reached, please try again at a later time.")
+            yield error_msg
 
 
-    
    

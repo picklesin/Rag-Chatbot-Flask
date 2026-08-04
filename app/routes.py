@@ -64,10 +64,14 @@ def chat_bot():
             stream_with_context(chat_response(question)),
             mimetype="text/plain",  
         )
-    
-    except Exception as e:
-        error_msg = f"Error: {str(e)}"
-        flash(error_msg)
+
+       
+    except Exception:
+        error_msg = ("There seems so be an issue with the server. Please try again at a later time")
+        return Response(
+            stream_with_context(error_msg),
+            mimetype="text/plain",
+        )
     
 
 
