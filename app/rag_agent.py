@@ -12,7 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from google.genai.errors import ClientError
 from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
-
+import time
 
 
 def text_splitter(file_path):
@@ -49,8 +49,7 @@ def load_vector_store_developement():
         return store
 
     except Exception as e:
-        error_msg = (f"Error: {str(e)}")
-        flash (error_msg)
+        raise RuntimeError(f"Unable to create vector store: {e}")
 
 # Create embeddings model for production
 def load_vector_store_production():
@@ -66,8 +65,7 @@ def load_vector_store_production():
         return store
 
     except Exception as e:
-        error_msg = (f"Error: {str(e)}")
-        flash(error_msg)
+        raise RuntimeError(f"Unable to create vector store: {e}")
         
 
 vector_store = load_vector_store_production()
@@ -78,7 +76,7 @@ def build_rag_agent(vector_store):
     @tool(response_format="content_and_artifact")
     def retrieve_content(query: str):
         """Retrieve information to help answer a query"""
-        retrieved_docs = vector_store.similarity_search(query,k=5)
+        retrieved_docs = vector_store.similarity_search(query,k=2)
         serialized = "\n\n".join(
             (f"Source: {doc.metadata}\nContent: {doc.page_content}") for doc in retrieved_docs
         )
@@ -146,8 +144,8 @@ def chat_response(question):
             for delta in message.text:
                 yield delta
 
+    
     except ClientError as e:
-        print(f"This is error: {str(e)}")
         if "RESOURCE_EXHAUSTED" in str(e):
             error_msg = ("Gemini quota has been reached, please try again at a later time.")
             yield error_msg
