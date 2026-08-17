@@ -13,7 +13,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from google.genai.errors import ClientError
 from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
-import time
 import psycopg2
 
 
@@ -97,19 +96,16 @@ vector_store = load_vector_store_production()
 
 # Build rag agent using Gemini
 def build_rag_agent(vector_store):
-    start = time.perf_counter()
+
     @tool(response_format="content_and_artifact")
     def retrieve_content(query: str):
         """Retrieve information to help answer a query"""
-        start2 = time.perf_counter()
         retrieved_docs = vector_store.similarity_search(query,k=4)
-        print(f"This is the time it took for retrieving: {time.perf_counter() - start2}")
         serialized = "\n\n".join(
             (f"Source: {doc.metadata}\nContent: {doc.page_content}") for doc in retrieved_docs
         )
 
         return serialized, retrieved_docs
-    print(f"This is the time it took to return after using tool: {time.perf_counter() - start}")
 
     model = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
     tools = [retrieve_content]
@@ -171,23 +167,15 @@ def chat_response(question):
 
         thread_id = session["thread_id"]
 
-        start = time.perf_counter()
         stream = agent.stream_events(
         {"messages": [{"role": "user", "content": question}]},
         {"configurable": {"thread_id": thread_id}},
         version="v3",
         )
-        print(f"Time it took after streaming: {time.perf_counter() - start}")
 
-        for event in stream:
-            print(event)
-
-        start_2 = time.perf_counter()
         for message in stream.messages:
             for delta in message.text:
                 yield delta
-
-        print(f"Time it took after yield: {time.perf_counter() - start_2}")
 
     
     except ClientError as e:
@@ -196,14 +184,3 @@ def chat_response(question):
             yield error_msg
 
 
-   
-'''
-Time it took after streaming: 0.003190916031599045
-This is the time it took for retrieving: 1.0051889589522034
-This is the time it took for retrieving: 0.8920750829856843
-This is the time it took for retrieving: 0.9859839999116957
-This is the time it took for retrieving: 0.9433619999326766
-This is the time it took for retrieving: 0.9115286250598729
-127.0.0.1 - - [05/Aug/2026 13:45:09] "POST /chatbot HTTP/1.1" 200 -
-Time it took after yield: 198.42999533284456
-'''
