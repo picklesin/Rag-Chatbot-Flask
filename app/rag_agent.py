@@ -13,7 +13,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from google.genai.errors import ClientError
 from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
-import psycopg2
 
 
 def text_splitter(file_path):
