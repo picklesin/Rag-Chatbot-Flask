@@ -27,59 +27,19 @@ def text_splitter(file_path):
     )
 
     doc = text_splitter.split_documents(docs)
-
     return doc
-
-# create a func that checks if uploaded pdf is in DB
-def is_duplicate(file_path):
-    source = str(file_path)
-    con = psycopg2.connect(os.environ["DATABASE_URL"])
-    cursor = con.cursor()
-    
-   
-    '''
-    check if docs is in DB, use metadata title
-    maybe return a True or False value
-    '''
-    pass
 
 
 def ingest_pdf(file_path):
     docs = text_splitter(file_path)
-    vector_store = load_vector_store_production()
-    new_docs = []
-
-    for doc in docs:
-        if is_duplicate(file_path):
-            continue
-        new_docs.append(doc)
-
-    if new_docs:
-        vector_store.add_documents(new_docs)
+    vector_store = load_vector_store()
+    vector_store.add_documents(docs)
         
-
-
-# Create embeddings model for development
-def load_vector_store_developement():
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
-                                                api_key=os.environ["GOOGLE_API_KEY"],)
-        
-    try:
-        store = Chroma(
-            collection_name="pdf-collection",
-            embedding_function=embeddings,
-            persist_directory='chroma',
-        )
-        return store
-
-    except Exception as e:
-        raise RuntimeError(f"Unable to create vector store: {e}")
 
 # Create embeddings model for production
-def load_vector_store_production():
+def load_vector_store():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
                                                 api_key=os.environ["GOOGLE_API_KEY"],)
-    
     try:
         store = PGVector(
             embeddings=embeddings,
@@ -92,7 +52,7 @@ def load_vector_store_production():
         raise RuntimeError(f"Unable to create vector store: {e}")
         
 
-vector_store = load_vector_store_production()
+vector_store = load_vector_store()
 
 # Build rag agent using Gemini
 def build_rag_agent(vector_store):
