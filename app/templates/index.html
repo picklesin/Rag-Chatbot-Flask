@@ -118,6 +118,48 @@
         .btn:hover {
             background-color: #525253;
         }
+        
+        :root {
+          --color-one: hsl(220, 60%, 20%);
+          --color-two: hsl(220, 50%, 60%);
+        }
+        
+        .shimmer {
+          font-size: 1rem;
+          background-image: linear-gradient(
+            to right,
+            var(--color-one),
+            var(--color-two) 5%,
+            var(--color-one) 15%
+          );
+          background-clip: text;
+          color: transparent;
+          background-size: 200%;
+          animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            to {
+                background-position: -200%;
+            }
+        }
+        
+        .thinking-block {
+            animation: thinkingAppear 0.5s ease-out;
+        }
+
+        @keyframes thinkingAppear {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+    
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+    }
+      
 
     </style>
 </head>
@@ -132,7 +174,7 @@
 		<div class="boxed">
 			{% for message in get_flashed_messages() %}
 				<div class="messages">{{ message }}</div>
-			{% endfor %}
+			{% endfor %} 
 		<div>
     </nav>
 
@@ -207,7 +249,7 @@
                         </div>
                 </div>
             </div>`
-
+            
 
             sendbtn.disabled = true
             userinputarea.disabled = true
@@ -215,9 +257,18 @@
 
 
             document.getElementById('userinput').value = ""
-            document.getElementById('userinput').placeholder = "Wait . . ."
+            document.getElementById('userinput').placeholder = "wait..."
+            
+            upperdiv.innerHTML = upperdiv.innerHTML + `<div class="message thinking-block">
+                <div class="appmessagediv">
+                    <div class="appmessage" id="temp">
+                        <span class="shimmer thinking-message">Thinking about results...</span>
+                    </div>
+                </div>
+            </div>`
 
-            const response = await fetch("https://rag-chatbot-szco.onrender.com/chatbot", {
+
+            const response = await fetch("http://127.0.0.1:8000/chatbot", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -225,20 +276,13 @@
                 body: JSON.stringify({ data: userinput })
 
             });
-            //let json = await response.json();
-
-            upperdiv.innerHTML = upperdiv.innerHTML + `<div class="message">
-                <div class="appmessagediv">
-                    <div class="appmessage" id="temp">
-                        
-                    </div>
-                </div>
-            </div>`
 
             let temp = document.getElementById('temp');
+   
 
             const reader = response.body.getReader();
             let output = "";
+            let firstChunk = true;
 
             while(true) {
                 const { done, value } = await reader.read();
@@ -246,7 +290,13 @@
                 if (done) {
                     break;
                 }
-
+                
+                if (firstChunk) {
+                    temp.innerHTML = "";
+                    temp.classList.remove("shimmer");
+                    firstChunk = false;
+                }
+    
                 output = new TextDecoder().decode(value);
                 temp.innerHTML += output;
                 scrollToBottom();
