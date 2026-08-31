@@ -1,6 +1,6 @@
 import os
 import uuid
-from flask import session, flash
+from flask import session
 from langchain.tools import tool
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_postgres import PGVector
@@ -8,7 +8,6 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import ToolCallLimitMiddleware
 from langgraph.checkpoint.memory import InMemorySaver
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from google.genai.errors import ClientError
@@ -116,8 +115,6 @@ def quota_exhausted(exc):
     wait=wait_exponential_jitter(initial=60, max=180),
     reraise=True,
 )
-
-# Gemini rag response
 def chat_response(question):
 
     try:
@@ -141,5 +138,4 @@ def chat_response(question):
         if "RESOURCE_EXHAUSTED" in str(e):
             error_msg = ("Gemini quota has been reached, please try again at a later time.")
             yield error_msg
-
 
