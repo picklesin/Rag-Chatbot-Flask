@@ -1,7 +1,3 @@
-## Project Status
-
-Work in progress — additional features under active development.
-
 **Live Demo:** [RAG Chatbot](https://rag-chatbot-szco.onrender.com)
 
 ## Screenshot
