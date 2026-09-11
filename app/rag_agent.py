@@ -135,7 +135,7 @@ def chat_response(question):
                 yield delta
 
         end = time.perf_counter() - start
-        print(f"Chatbot response time: {end}s")
+        print(f"Chatbot response time: {end}s", flush=True)
 
     
     except ClientError as e:
@@ -143,15 +143,3 @@ def chat_response(question):
             error_msg = ("Gemini quota has been reached, please try again at a later time.")
             yield error_msg
 
-
-"""
-k=4
-limit=5
-Chatbot response time: 34.82893841667101s
-"""
-
-"""
-k=3
-limit=5
-Chatbot response time: 49.06338725006208s
-"""
