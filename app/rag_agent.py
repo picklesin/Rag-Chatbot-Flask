@@ -12,7 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from google.genai.errors import ClientError
 from tenacity import retry, stop_after_attempt, wait_exponential_jitter, retry_if_exception_type
-
+import time
 
 def text_splitter(file_path):
     loader = PyPDFLoader(file_path)
@@ -58,7 +58,7 @@ def build_rag_agent(vector_store):
     @tool(response_format="content_and_artifact")
     def retrieve_content(query: str):
         """Retrieve information to help answer a query"""
-        retrieved_docs = vector_store.similarity_search(query,k=4)
+        retrieved_docs = vector_store.similarity_search(query,k=3)
         serialized = "\n\n".join(
             (f"Source: {doc.metadata}\nContent: {doc.page_content}") for doc in retrieved_docs
         )
@@ -91,7 +91,7 @@ def build_rag_agent(vector_store):
         middleware=[
             ToolCallLimitMiddleware(
                 tool_name="retrieve_content",
-                run_limit=5,
+                run_limit=3,
             )
         ],
     )
@@ -129,9 +129,13 @@ def chat_response(question):
         version="v3",
         )
 
+        start = time.perf_counter()
         for message in stream.messages:
             for delta in message.text:
                 yield delta
+
+        end = time.perf_counter() - start
+        print(f"Chatbot response time: {end}s")
 
     
     except ClientError as e:
@@ -139,3 +143,15 @@ def chat_response(question):
             error_msg = ("Gemini quota has been reached, please try again at a later time.")
             yield error_msg
 
+
+"""
+k=4
+limit=5
+Chatbot response time: 34.82893841667101s
+"""
+
+"""
+k=3
+limit=5
+Chatbot response time: 49.06338725006208s
+"""
