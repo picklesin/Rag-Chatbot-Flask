@@ -52,13 +52,16 @@ def load_vector_store():
 
 vector_store = load_vector_store()
 
+K = int(os.getenv("RAG_K", "3"))
+tool_call_limit = int(os.getenv("TOOL_CALL","3"))
+
 # Build rag agent using Gemini
 def build_rag_agent(vector_store):
 
     @tool(response_format="content_and_artifact")
     def retrieve_content(query: str):
         """Retrieve information to help answer a query"""
-        retrieved_docs = vector_store.similarity_search(query,k=3)
+        retrieved_docs = vector_store.similarity_search(query,k=K)
         serialized = "\n\n".join(
             (f"Source: {doc.metadata}\nContent: {doc.page_content}") for doc in retrieved_docs
         )
@@ -91,7 +94,7 @@ def build_rag_agent(vector_store):
         middleware=[
             ToolCallLimitMiddleware(
                 tool_name="retrieve_content",
-                run_limit=3,
+                run_limit=tool_call_limit,
             )
         ],
     )
