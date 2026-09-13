@@ -37,7 +37,7 @@ def ingest_pdf(file_path):
 # Create embeddings model for production
 def load_vector_store():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001",
-                                                api_key=os.environ["GOOGLE_API_KEY"],)
+                                                api_key=os.getenv("GOOGLE_API_KEY"),)
     try:
         store = PGVector(
             embeddings=embeddings,
@@ -68,7 +68,7 @@ def build_rag_agent(vector_store):
 
         return serialized, retrieved_docs
 
-    model = ChatGoogleGenerativeAI(model="gemini-3.5-flash")
+    model = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_MODEL"))
     tools = [retrieve_content]
     checkpointer = InMemorySaver()
 
